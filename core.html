@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Basic functionality">
+
+<title>Terminal-LLM - core</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Terminal-LLM - core">
+<meta property="og:description" content="Basic functionality">
+<meta property="og:site_name" content="Terminal-LLM">
+<meta name="twitter:title" content="Terminal-LLM - core">
+<meta name="twitter:description" content="Basic functionality">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Terminal-LLM</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./core.html">core</a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Terminal-LLM</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./core.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">core</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#post-request" id="toc-post-request" class="nav-link active" data-scroll-target="#post-request">POST Request</a></li>
+  <li><a href="#mistral-library" id="toc-mistral-library" class="nav-link" data-scroll-target="#mistral-library">Mistral Library</a>
+  <ul class="collapse">
+  <li><a href="#no-streaming" id="toc-no-streaming" class="nav-link" data-scroll-target="#no-streaming">No Streaming</a></li>
+  <li><a href="#with-streaming" id="toc-with-streaming" class="nav-link" data-scroll-target="#with-streaming">With Streaming</a></li>
+  <li><a href="#with-async" id="toc-with-async" class="nav-link" data-scroll-target="#with-async">With async</a></li>
+  </ul></li>
+  <li><a href="#chat-class" id="toc-chat-class" class="nav-link" data-scroll-target="#chat-class">Chat Class</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/ForBo7/Terminal-LLM/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">core</h1>
+</div>
+
+<div>
+  <div class="description">
+    Basic functionality
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<blockquote class="blockquote">
+<p>This notebook follows the fastai style guide. perhaps move this message to the index page only.</p>
+</blockquote>
+<p>TODO: Change this so it reads the key from an environment variable or a text file.</p>
+<div id="cell-4" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ! curl --location "https://api.mistral.ai/v1/chat/completions" \</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#      --header 'Content-Type: application/json' \</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#      --header 'Accept: application/json' \</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#      --header "Authorization: Bearer [KEY_GOES_HERE]" \</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#      --data '{"model": "open-mistral-7b", "messages": [{"role": "user", "content": "Who is the most renowned French painter?"}]}'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{"id":"7a2062665f184ce6993aef0e89bfc007","object":"chat.completion","created":1712205872,"model":"open-mistral-7b","choices":[{"index":0,"message":{"role":"assistant","content":"There are several renowned French painters throughout history, but perhaps the most famous one is Leonardo da Vinci, even though he was born in Italy. However, if we focus on French painters, I would mention some of the greatest ones:\n\n1. Claude Monet (1840-1926): He is considered the founder of Impressionism, a movement characterized by its emphasis on capturing the momentary, sensory effect of a scene. Monet's works are known for their vibrant colors and loose brushwork.\n\n2. Pierre-Auguste Renoir (1841-1919): Renoir is one of the leading figures in the Impressionist movement. His paintings are characterized by their captivating portrayals of beauty and sensuality, often depicting women and landscapes.\n\n3. Edgar Degas (1834-1917): Degas was a leading figure in the Impressionist movement, particularly known for his paintings of ballet dancers and racehorses. His innovative composition and technique continue to influence artists today.\n\n4. Paul Cézanne (1839-1906): Cézanne is considered the father of Modern art due to his influence on Cubism and other avant-garde movements. He is known for his still lifes, landscapes, and portraits, characterized by their bold, distinct forms and vibrant colors.\n\n5. Henri Matisse (1869-1954): Matisse is a pioneer of Modern art, particularly known for his use of color and his innovative compositions. He was a leading figure in the Fauvist and Expressionist movements, and his works continue to inspire artists today.\n\nAll of these artists have made significant contributions to the world of art, and their works continue to be celebrated and admired.","tool_calls":null},"finish_reason":"stop","logprobs":null}],"usage":{"prompt_tokens":17,"total_tokens":425,"completion_tokens":408}}</code></pre>
+</div>
+</div>
+<div id="cell-5" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>URL <span class="op">=</span> <span class="st">'https://api.mistral.ai/v1/chat/completions'</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.get(URL)<span class="op">;</span> response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>&lt;Response [401]&gt;</code></pre>
+</div>
+</div>
+<div id="cell-6" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(response), response.status_code</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>(requests.models.Response, 401)</code></pre>
+</div>
+</div>
+<div id="cell-7" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> response: <span class="bu">print</span>(<span class="st">'Success.'</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>: <span class="cf">raise</span> <span class="pp">Exception</span>(<span class="ss">f'Error </span><span class="sc">{</span>response<span class="sc">.</span>status_code<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>Exception: Error 401</code></pre>
+</div>
+</div>
+<div id="cell-8" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> requests.exceptions <span class="im">import</span> HTTPError</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  response <span class="op">=</span> requests.get(URL)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  response.raise_for_status()</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> HTTPError <span class="im">as</span> http_err: <span class="bu">print</span>(<span class="ss">f'HTTP error occured: </span><span class="sc">{</span>http_err<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> err: <span class="bu">print</span>(<span class="ss">f'Other error occured: </span><span class="sc">{</span>err<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>: <span class="bu">print</span>(<span class="st">'Success!'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>HTTP error occured: 401 Client Error: Unauthorized for url: https://api.mistral.ai/v1/chat/completions</code></pre>
+</div>
+</div>
+<div id="cell-9" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>?response.raise_for_status</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Signature: response.raise_for_status()
+Docstring: Raises :class:`HTTPError`, if one occurred.
+File:      ~/mambaforge/envs/terminal-llm/lib/python3.12/site-packages/requests/models.py
+Type:      method</code></pre>
+</div>
+</div>
+<div id="cell-10" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>response.content, <span class="bu">type</span>(response.content)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>(b'{\n  "message":"No API key found in request",\n  "request_id":"717a951c1c0b6e0d7e5885156417d726"\n}',
+ bytes)</code></pre>
+</div>
+</div>
+<div id="cell-11" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>response.text, <span class="bu">type</span>(response.text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<pre><code>('{\n  "message":"No API key found in request",\n  "request_id":"717a951c1c0b6e0d7e5885156417d726"\n}',
+ str)</code></pre>
+</div>
+</div>
+<p>Requests attempts to infer the encoding based on the responese’s headers.</p>
+<div id="cell-13" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>response.encoding <span class="op">=</span> <span class="st">'utf-8'</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>response.text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>'{\n  "message":"No API key found in request",\n  "request_id":"717a951c1c0b6e0d7e5885156417d726"\n}'</code></pre>
+</div>
+</div>
+<p>We most likely do not need to specify the encoding as the header alread contains the necessary information.</p>
+<div id="cell-15" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>response.headers[<span class="st">'Content-Type'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>'application/json; charset=utf-8'</code></pre>
+</div>
+</div>
+<div id="cell-16" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>response.json()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>{'message': 'No API key found in request',
+ 'request_id': '717a951c1c0b6e0d7e5885156417d726'}</code></pre>
+</div>
+</div>
+<section id="post-request" class="level2">
+<h2 class="anchored" data-anchor-id="post-request">POST Request</h2>
+<div id="cell-18" class="cell" data-execution_count="89">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'../api_key.txt'</span>, <span class="st">'r'</span>) <span class="im">as</span> f: API_KEY <span class="op">=</span> f.read()</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>message <span class="op">=</span> <span class="st">'Who is the most renowned French artist?'</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>h <span class="op">=</span> {<span class="st">'Content-Type'</span>: <span class="st">'application/json'</span>, <span class="st">'Accept'</span>: <span class="st">'application/json'</span>, <span class="st">'Authorization'</span>: <span class="ss">f'Bearer </span><span class="sc">{</span>API_KEY<span class="sc">}</span><span class="ss">'</span>}</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> {<span class="st">'model'</span>: <span class="st">'open-mistral-7b'</span>, <span class="st">'messages'</span>: [{<span class="st">'role'</span>: <span class="st">'user'</span>, <span class="st">'content'</span>: message}]}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-19" class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> requests.post(URL, headers<span class="op">=</span>h, json<span class="op">=</span>d)<span class="op">;</span> r.status_code</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="24">
+<pre><code>200</code></pre>
+</div>
+</div>
+<div id="cell-20" class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>r.text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>NameError: name 'r' is not defined</code></pre>
+</div>
+</div>
+<div id="cell-21" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>r.json()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>NameError: name 'r' is not defined</code></pre>
+</div>
+</div>
+<div id="cell-22" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>r.request.headers</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>NameError: name 'r' is not defined</code></pre>
+</div>
+</div>
+<div id="cell-23" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># d = {'model': 'open-mistral-7b', 'messages': [{'role': 'user', 'content': 'What about British artists??'}]}</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>message <span class="op">=</span> <span class="st">'How about from Britian?'</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>d[<span class="st">'messages'</span>][<span class="dv">0</span>][<span class="st">'content'</span>] <span class="op">=</span> message</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> requests.post(URL, headers<span class="op">=</span>h, json<span class="op">=</span>d)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-24" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>r.json()[<span class="st">'choices'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="19">
+<pre><code>[{'index': 0,
+  'message': {'role': 'assistant',
+   'content': "I'd be happy to help answer any question you have related to Britain or the United Kingdom. Please keep in mind that I'm an AI language model and don't have the ability to browse the internet or access real-time information. I can, however, provide information based on the data I've been programmed with. If you have a specific question, feel free to ask and I'll do my best to provide an accurate and helpful response.\n\nFor example, you might be interested in knowing some general information about Britain or the UK, such as its geography, climate, population, history, culture, or economy. Or you might have a question about a particular city, landmark, organization, or event in Britain. Let me know what you have in mind, and I'll do my best to help you out!\n\nHere are a few facts about Britain and the UK that might be interesting:\n\n* Britain is the largest island in Europe, located off the northwest coast of the continent. It consists of four countries: England, Scotland, Wales, and Northern Ireland.\n* The UK is a constitutional monarchy with Queen Elizabeth II as the reigning monarch.\n* The capital city of the UK is London, which is also the largest city.\n* The UK has a diverse climate, with mild winters and cool summers in most areas.\n* The UK has a rich history, with evidence of human habitation dating back to the Stone Age.\n* The UK is a leading global power in various fields, including finance, technology, education, and entertainment.\n* The UK is home to many famous landmarks, such as the Tower of London, Stonehenge, and the Scottish Highlands.\n* The UK has a complex political system, with a Parliamentary democracy and a constitutional monarchy.\n* The UK has a diverse population, with people of many different ethnic and religious backgrounds.\n* The UK is a member of the European Union, but has decided to leave the EU as of January 2020.\n* The UK has a strong cultural heritage, with contributions to literature, music, art, and science.\n\nLet me know if you have any specific questions about Britain or the UK, or if you'd like to know more about a particular topic related to the country. I'll do my best to provide you with accurate and helpful information!",
+   'tool_calls': None},
+  'finish_reason': 'stop',
+  'logprobs': None}]</code></pre>
+</div>
+</div>
+</section>
+<section id="mistral-library" class="level2">
+<h2 class="anchored" data-anchor-id="mistral-library">Mistral Library</h2>
+<p>No need to do from scratch. Mistral provides a convenient library.</p>
+<div id="cell-27" class="cell" data-execution_count="47">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mistralai.client <span class="im">import</span> MistralClient</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> MistralClient(api_key<span class="op">=</span>API_KEY)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-28" class="cell" data-execution_count="50">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mistralai.models.chat_completion <span class="im">import</span> ChatMessage</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>messages <span class="op">=</span> [ChatMessage(role<span class="op">=</span><span class="st">'user'</span>, content<span class="op">=</span><span class="st">'What is the best French cheese?'</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="no-streaming" class="level3">
+<h3 class="anchored" data-anchor-id="no-streaming">No Streaming</h3>
+<div id="cell-30" class="cell" data-execution_count="51">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="st">'open-mistral-7b'</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>chat_response <span class="op">=</span> client.chat(model<span class="op">=</span>m, messages<span class="op">=</span>messages)<span class="op">;</span> chat_response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="51">
+<pre><code>ChatCompletionResponse(id='942ef83d335d40d295cf49b98949eb45', object='chat.completion', created=1712563746, model='open-mistral-7b', choices=[ChatCompletionResponseChoice(index=0, message=ChatMessage(role='assistant', content='It is subjective to determine the "best" French cheese as it largely depends on personal preferences. Some popular and highly regarded French cheeses include:\n\n1. Roquefort: A blue-veined cheese made from sheep\'s milk, originating from the Massif Central region. It\'s known for its distinctive tangy and pungent flavor.\n\n2. Brie de Meaux: A soft, creamy cow\'s milk cheese with a white rind and a mild, buttery flavor. It originated in the Marne region and is one of the most famous French cheeses.\n\n3. Comté: A hard, nutty, and slightly sweet cow\'s milk cheese from the Franche-Comté region in eastern France. It is often compared to Swiss Emmenthal.\n\n4. Camembert de Normandie: A soft, earthy cow\'s milk cheese with a white rind and a pungent, tangy flavor. It is originally from the Normandy region.\n\n5. Munster: A soft, smelly, and pungent cow\'s milk cheese with a washed rind. It originated in the Alsace region and is known for its strong flavor and aroma.\n\n6. Chèvre: A goat\'s milk cheese that can come in various forms, such as soft, fresh chevre or aged and hard chévre. It is often milder in flavor but can be quite pungent when aged.\n\nThese are just a few examples, and there are many more wonderful French cheeses to explore. To find the "best" one for you, consider trying different varieties and finding the one that suits your taste preferences.', name=None, tool_calls=None), finish_reason=&lt;FinishReason.stop: 'stop'&gt;)], usage=UsageInfo(prompt_tokens=15, total_tokens=381, completion_tokens=366))</code></pre>
+</div>
+</div>
+<div id="cell-31" class="cell" data-execution_count="52">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>chat_response.choices[<span class="dv">0</span>].message.content</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="52">
+<pre><code>'It is subjective to determine the "best" French cheese as it largely depends on personal preferences. Some popular and highly regarded French cheeses include:\n\n1. Roquefort: A blue-veined cheese made from sheep\'s milk, originating from the Massif Central region. It\'s known for its distinctive tangy and pungent flavor.\n\n2. Brie de Meaux: A soft, creamy cow\'s milk cheese with a white rind and a mild, buttery flavor. It originated in the Marne region and is one of the most famous French cheeses.\n\n3. Comté: A hard, nutty, and slightly sweet cow\'s milk cheese from the Franche-Comté region in eastern France. It is often compared to Swiss Emmenthal.\n\n4. Camembert de Normandie: A soft, earthy cow\'s milk cheese with a white rind and a pungent, tangy flavor. It is originally from the Normandy region.\n\n5. Munster: A soft, smelly, and pungent cow\'s milk cheese with a washed rind. It originated in the Alsace region and is known for its strong flavor and aroma.\n\n6. Chèvre: A goat\'s milk cheese that can come in various forms, such as soft, fresh chevre or aged and hard chévre. It is often milder in flavor but can be quite pungent when aged.\n\nThese are just a few examples, and there are many more wonderful French cheeses to explore. To find the "best" one for you, consider trying different varieties and finding the one that suits your taste preferences.'</code></pre>
+</div>
+</div>
+<div id="cell-32" class="cell" data-execution_count="55">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>messages.append(ChatMessage(role<span class="op">=</span><span class="st">'user'</span>, content<span class="op">=</span><span class="st">'What about the British variety?'</span>))</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>chat_response <span class="op">=</span> client.chat(model<span class="op">=</span>m, messages<span class="op">=</span>messages)<span class="op">;</span> chat_response.choices[<span class="dv">0</span>].message.content</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="55">
+<pre><code>'Determining the "best" French or British cheese can be subjective as it depends on personal preference. Both countries have a rich cheese tradition and offer a diverse range of cheeses. Here are a few famous ones from each country:\n\nFrench Cheeses:\n1. Roquefort: A blue-veined cheese made from sheep\'s milk. It has a strong, pungent flavor and a creamy texture.\n2. Camembert: A soft, white, mold-ripened cheese with a rich, buttery taste.\n3. Comté: A nutty and slightly sweet hard cheese made from unpasteurized cow\'s milk.\n4. Brie de Meaux: A soft, creamy cheese with a white rind and a mild, buttery flavor.\n\nBritish Cheeses:\n1. Cheddar: A hard, smooth-textured cheese with a sharp, savory flavor. It\'s one of the most widely-produced and consumed cheeses in the world.\n2. Stilton: A blue-veined cheese with a strong, tangy flavor and a crumbly texture.\n3. Cheshire: A hard, crumbly cheese with a mild, slightly sweet flavor and a nutty aftertaste.\n4. Wensleydale: A creamy, slightly sweet cheese often used in fruitcakes and puddings.\n\nThe best cheese is ultimately a matter of personal taste and preference. It is recommended to try a variety to determine which one you enjoy the most.'</code></pre>
+</div>
+</div>
+<div id="cell-33" class="cell" data-execution_count="57">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>?ChatMessage</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Init signature:
+ChatMessage(
+    *,
+    role: str,
+    content: Union[str, List[str]],
+    name: Optional[str] = None,
+    tool_calls: Optional[List[mistralai.models.chat_completion.ToolCall]] = None,
+) -&gt; None
+Docstring:     
+Usage docs: https://docs.pydantic.dev/2.6/concepts/models/
+
+A base class for creating Pydantic models.
+
+Attributes:
+    __class_vars__: The names of classvars defined on the model.
+    __private_attributes__: Metadata about the private attributes of the model.
+    __signature__: The signature for instantiating the model.
+
+    __pydantic_complete__: Whether model building is completed, or if there are still undefined fields.
+    __pydantic_core_schema__: The pydantic-core schema used to build the SchemaValidator and SchemaSerializer.
+    __pydantic_custom_init__: Whether the model has a custom `__init__` function.
+    __pydantic_decorators__: Metadata containing the decorators defined on the model.
+        This replaces `Model.__validators__` and `Model.__root_validators__` from Pydantic V1.
+    __pydantic_generic_metadata__: Metadata for generic models; contains data used for a similar purpose to
+        __args__, __origin__, __parameters__ in typing-module generics. May eventually be replaced by these.
+    __pydantic_parent_namespace__: Parent namespace of the model, used for automatic rebuilding of models.
+    __pydantic_post_init__: The name of the post-init method for the model, if defined.
+    __pydantic_root_model__: Whether the model is a `RootModel`.
+    __pydantic_serializer__: The pydantic-core SchemaSerializer used to dump instances of the model.
+    __pydantic_validator__: The pydantic-core SchemaValidator used to validate instances of the model.
+
+    __pydantic_extra__: An instance attribute with the values of extra fields from validation when
+        `model_config['extra'] == 'allow'`.
+    __pydantic_fields_set__: An instance attribute with the names of fields explicitly set.
+    __pydantic_private__: Instance attribute with the values of private attributes set on the model instance.
+Init docstring:
+Create a new model by parsing and validating input data from keyword arguments.
+
+Raises [`ValidationError`][pydantic_core.ValidationError] if the input data cannot be
+validated to form a valid model.
+
+`self` is explicitly positional-only to allow `self` as a field name.
+File:           ~/mambaforge/envs/terminal-llm/lib/python3.12/site-packages/mistralai/models/chat_completion.py
+Type:           ModelMetaclass
+Subclasses:     </code></pre>
+</div>
+</div>
+<div id="cell-34" class="cell" data-execution_count="58">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>?client.chat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Signature:
+client.chat(
+    messages: List[Any],
+    model: Optional[str] = None,
+    tools: Optional[List[Dict[str, Any]]] = None,
+    temperature: Optional[float] = None,
+    max_tokens: Optional[int] = None,
+    top_p: Optional[float] = None,
+    random_seed: Optional[int] = None,
+    safe_mode: bool = False,
+    safe_prompt: bool = False,
+    tool_choice: Union[str, mistralai.models.chat_completion.ToolChoice, NoneType] = None,
+    response_format: Union[Dict[str, str], mistralai.models.chat_completion.ResponseFormat, NoneType] = None,
+) -&gt; mistralai.models.chat_completion.ChatCompletionResponse
+Docstring:
+A chat endpoint that returns a single response.
+
+Args:
+    model (str): model the name of the model to chat with, e.g. mistral-tiny
+    messages (List[Any]): messages an array of messages to chat with, e.g.
+        [{role: 'user', content: 'What is the best French cheese?'}]
+    tools (Optional[List[Function]], optional): a list of tools to use.
+    temperature (Optional[float], optional): temperature the temperature to use for sampling, e.g. 0.5.
+    max_tokens (Optional[int], optional): the maximum number of tokens to generate, e.g. 100. Defaults to None.
+    top_p (Optional[float], optional): the cumulative probability of tokens to generate, e.g. 0.9.
+    Defaults to None.
+    random_seed (Optional[int], optional): the random seed to use for sampling, e.g. 42. Defaults to None.
+    safe_mode (bool, optional): deprecated, use safe_prompt instead. Defaults to False.
+    safe_prompt (bool, optional): whether to use safe prompt, e.g. true. Defaults to False.
+
+Returns:
+    ChatCompletionResponse: a response object containing the generated text.
+File:      ~/mambaforge/envs/terminal-llm/lib/python3.12/site-packages/mistralai/client.py
+Type:      method</code></pre>
+</div>
+</div>
+<div id="cell-35" class="cell" data-execution_count="62">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>messages</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="62">
+<pre><code>[ChatMessage(role='user', content='What is the best French cheese?', name=None, tool_calls=None),
+ ChatMessage(role='user', content='What about the British variety?', name=None, tool_calls=None)]</code></pre>
+</div>
+</div>
+<div id="cell-36" class="cell" data-execution_count="69">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>history <span class="op">=</span> []</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>contents <span class="op">=</span> <span class="st">'What is the best French cheese?'</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>messages <span class="op">=</span> history <span class="op">+</span> [ChatMessage(role<span class="op">=</span><span class="st">'user'</span>, content<span class="op">=</span>contents)]</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> client.chat(model<span class="op">=</span>m, messages<span class="op">=</span>messages)<span class="op">;</span> response.choices[<span class="dv">0</span>].message.content</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-37" class="cell" data-execution_count="71">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>history.append(ChatMessage(role<span class="op">=</span><span class="st">'user'</span>, content<span class="op">=</span>contents))<span class="op">;</span> history</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="71">
+<pre><code>[ChatMessage(role='user', content='What is the best French cheese?', name=None, tool_calls=None)]</code></pre>
+</div>
+</div>
+<div id="cell-38" class="cell" data-execution_count="74">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>history.append(ChatMessage(role<span class="op">=</span><span class="st">'assistant'</span>, content<span class="op">=</span>response.choices[<span class="dv">0</span>].message.content))<span class="op">;</span> history</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="74">
+<pre><code>[ChatMessage(role='user', content='What is the best French cheese?', name=None, tool_calls=None),
+ ChatMessage(role='assistant', content='It\'s subjective to determine the "best" French cheese as it largely depends on personal preference. Here are a few popular and highly regarded French cheeses:\n\n1. Roquefort: A blue-veined sheep\'s milk cheese from the Massif Central region, known for its strong, pungent flavor and distinctive tang.\n2. Comté: A nutty, slightly sweet cow\'s milk cheese from the Franche-Comté region, often described as the "king of French cheeses."\n3. Camembert: A soft, white, cow\'s milk cheese originating from Normandy, characterized by its earthy, mushroomy flavor and distinct white rind.\n4. Munster: A soft, smelly cow\'s milk cheese from the Alsace region, known for its pungent aroma and spicy, garlic-like flavor.\n5. Brie de Meaux: A soft, creamy cow\'s milk cheese from the Île-de-France region, famous for its velvety texture and mild, buttery flavor.\n\nConsider trying a variety of French cheeses to find the one that suits your taste buds best.', name=None, tool_calls=None)]</code></pre>
+</div>
+</div>
+<div id="cell-39" class="cell" data-execution_count="75">
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>contents <span class="op">=</span> <span class="st">'What about the British variety?'</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>messages <span class="op">=</span> history <span class="op">+</span> [ChatMessage(role<span class="op">=</span><span class="st">'user'</span>, content<span class="op">=</span>contents)]<span class="op">;</span> messages</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="75">
+<pre><code>[ChatMessage(role='user', content='What is the best French cheese?', name=None, tool_calls=None),
+ ChatMessage(role='assistant', content='It\'s subjective to determine the "best" French cheese as it largely depends on personal preference. Here are a few popular and highly regarded French cheeses:\n\n1. Roquefort: A blue-veined sheep\'s milk cheese from the Massif Central region, known for its strong, pungent flavor and distinctive tang.\n2. Comté: A nutty, slightly sweet cow\'s milk cheese from the Franche-Comté region, often described as the "king of French cheeses."\n3. Camembert: A soft, white, cow\'s milk cheese originating from Normandy, characterized by its earthy, mushroomy flavor and distinct white rind.\n4. Munster: A soft, smelly cow\'s milk cheese from the Alsace region, known for its pungent aroma and spicy, garlic-like flavor.\n5. Brie de Meaux: A soft, creamy cow\'s milk cheese from the Île-de-France region, famous for its velvety texture and mild, buttery flavor.\n\nConsider trying a variety of French cheeses to find the one that suits your taste buds best.', name=None, tool_calls=None),
+ ChatMessage(role='user', content='What about the British variety?', name=None, tool_calls=None)]</code></pre>
+</div>
+</div>
+<div id="cell-40" class="cell" data-execution_count="76">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_response(message): <span class="cf">return</span> client.chat(model<span class="op">=</span>m, messages<span class="op">=</span>message).choices[<span class="dv">0</span>].message.content</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> get_response(messages)<span class="op">;</span> response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="76">
+<pre><code>"British cheese is diverse and rich in flavor, offering a wide range of options for cheese lovers. Here are a few popular and highly regarded British cheeses:\n\n1. Cheddar: One of the most well-known British cheeses, Cheddar is a hard, smooth-textured cow's milk cheese originating from the village of Cheddar in Somerset. It has a sharp, tangy flavor that intensifies with aging.\n2. Stilton: A blue-veined cheese made from cow's milk, originating from the Eastern Midlands of England. Stilton is characterized by its strong, pungent smell and creamy, crumbly texture.\n3. Wensleydale: A mild, crumbly cow's milk cheese from the Yorkshire Dales. It can be found with or without fruit, such as cranberries or apricots, which adds a sweet contrast to the cheese's subtly nutty flavor.\n4. Cheshire: A hard, crumbly cow's milk cheese originating from Cheshire in northwest England, known for its slightly tangy and salty flavor.\n5. Lancashire: A cow's milk cheese from Lancashire in northwest England, characterized by its distinctive orange rind and tangy, slightly sweet flavor.\n\nThese are just a few examples of the many delicious British cheeses available. Explore the variety to find your personal favorite."</code></pre>
+</div>
+</div>
+<div id="cell-41" class="cell" data-execution_count="77">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>history.append(ChatMessage(role<span class="op">=</span><span class="st">'user'</span>, content<span class="op">=</span>contents))</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>history.append(ChatMessage(role<span class="op">=</span><span class="st">'assistant'</span>, content<span class="op">=</span>response))</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>history</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="77">
+<pre><code>[ChatMessage(role='user', content='What is the best French cheese?', name=None, tool_calls=None),
+ ChatMessage(role='assistant', content='It\'s subjective to determine the "best" French cheese as it largely depends on personal preference. Here are a few popular and highly regarded French cheeses:\n\n1. Roquefort: A blue-veined sheep\'s milk cheese from the Massif Central region, known for its strong, pungent flavor and distinctive tang.\n2. Comté: A nutty, slightly sweet cow\'s milk cheese from the Franche-Comté region, often described as the "king of French cheeses."\n3. Camembert: A soft, white, cow\'s milk cheese originating from Normandy, characterized by its earthy, mushroomy flavor and distinct white rind.\n4. Munster: A soft, smelly cow\'s milk cheese from the Alsace region, known for its pungent aroma and spicy, garlic-like flavor.\n5. Brie de Meaux: A soft, creamy cow\'s milk cheese from the Île-de-France region, famous for its velvety texture and mild, buttery flavor.\n\nConsider trying a variety of French cheeses to find the one that suits your taste buds best.', name=None, tool_calls=None),
+ ChatMessage(role='user', content='What about the British variety?', name=None, tool_calls=None),
+ ChatMessage(role='assistant', content="British cheese is diverse and rich in flavor, offering a wide range of options for cheese lovers. Here are a few popular and highly regarded British cheeses:\n\n1. Cheddar: One of the most well-known British cheeses, Cheddar is a hard, smooth-textured cow's milk cheese originating from the village of Cheddar in Somerset. It has a sharp, tangy flavor that intensifies with aging.\n2. Stilton: A blue-veined cheese made from cow's milk, originating from the Eastern Midlands of England. Stilton is characterized by its strong, pungent smell and creamy, crumbly texture.\n3. Wensleydale: A mild, crumbly cow's milk cheese from the Yorkshire Dales. It can be found with or without fruit, such as cranberries or apricots, which adds a sweet contrast to the cheese's subtly nutty flavor.\n4. Cheshire: A hard, crumbly cow's milk cheese originating from Cheshire in northwest England, known for its slightly tangy and salty flavor.\n5. Lancashire: A cow's milk cheese from Lancashire in northwest England, characterized by its distinctive orange rind and tangy, slightly sweet flavor.\n\nThese are just a few examples of the many delicious British cheeses available. Explore the variety to find your personal favorite.", name=None, tool_calls=None)]</code></pre>
+</div>
+</div>
+</section>
+<section id="with-streaming" class="level3">
+<h3 class="anchored" data-anchor-id="with-streaming">With Streaming</h3>
+<div id="cell-43" class="cell" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>stream_response <span class="op">=</span> client.chat_stream(model<span class="op">=</span>m, messages<span class="op">=</span>messages)<span class="op">;</span> stream_response</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="38">
+<pre><code>&lt;generator object MistralClient.chat_stream at 0x105ba8ac0&gt;</code></pre>
+</div>
+</div>
+<div id="cell-44" class="cell" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> chunk <span class="kw">in</span> stream_response: <span class="bu">print</span>(chunk)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role='assistant', content='', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='It', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content="'", tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='s', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' important', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' to', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' note', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' that', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' the', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' "', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='best', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='"', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' French', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' cheese', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' is', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' subject', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ive', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' and', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' depends', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' on', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' personal', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' preferences', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' There', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' are', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' numerous', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' French', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' che', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='es', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='es', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' each', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' with', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' unique', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' characteristics', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' text', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ures', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' and', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' flav', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ors', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' Here', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' are', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' some', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' renown', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ed', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' French', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' che', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='es', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='es', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' that', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' you', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' might', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' want', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' to', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' explore', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=':', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='\n\n1', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' Ro', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='qu', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ef', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ort', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=':', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' This', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' is', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' blue', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='-', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ve', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ined', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' sheep', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content="'", tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='s', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' milk', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' cheese', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' with', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' strong', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' p', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ung', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ent', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' flavor', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' and', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' distinctive', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' blue', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='-', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='green', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' ve', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ins', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' It', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' has', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' cream', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='y', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' texture', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' and', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' is', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' often', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' used', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' in', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' sal', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ads', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' or', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' as', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' an', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' appet', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='izer', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='\n\n2', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' Cam', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ember', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='t', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=':', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' Cam', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ember', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='t', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' is', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' soft', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' white', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' mold', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='-', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='rip', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ened', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' cow', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content="'", tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='s', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' milk', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' cheese', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' origin', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ating', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' from', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' Norm', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='andy', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' France', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' It', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' has', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' rich', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' earth', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='y', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' flavor', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' and', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' distinctive', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' sour', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' smell', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='\n\n3', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' Com', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='té', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=':', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' This', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' is', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' nut', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ty', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' fru', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ity', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' and', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' slightly', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' sweet', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' cow', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content="'", tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='s', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' milk', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' cheese', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' from', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' the', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' J', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ura', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' region', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' of', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' France', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' It', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' has', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' firm', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' texture', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' and', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' is', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' often', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' used', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' in', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' cooking', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' gr', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ated', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' over', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' dishes', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' or', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' eaten', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' on', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' its', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' own', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='\n\n4', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' B', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='rie', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' de', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' Me', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='aux', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=':', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' This', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' is', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' soft', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' cream', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='y', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' cow', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content="'", tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='s', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' milk', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' cheese', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' with', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' mild', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' butter', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='y', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' flavor', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' and', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' vel', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='v', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ety', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' texture', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' It', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' has', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' white', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' r', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ind', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' and', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' is', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' often', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' eaten', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' with', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' fresh', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' fruit', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' bread', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' or', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' crack', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ers', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='\n\n5', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' Mun', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ster', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=':', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' Mun', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ster', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' is', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' soft', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' sm', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='elly', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' cow', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content="'", tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='s', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' milk', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' cheese', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' with', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' p', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ung', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ent', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' sp', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='icy', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' flavor', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' and', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' run', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ny', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' texture', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' It', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' is', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' often', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' eaten', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' melt', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ed', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' on', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' a', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' bag', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='u', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ette', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' or', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' used', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' in', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' cooking', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='\n\nU', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='lt', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='imately', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=',', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' the', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' best', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' French', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' cheese', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' for', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' you', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' depends', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' on', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' your', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' personal', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' taste', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' preferences', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' I', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' encourage', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' you', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' to', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' explore', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' these', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' che', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='es', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='es', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' and', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' many', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' others', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' to', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' find', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' the', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' one', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' that', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' suits', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' your', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' pal', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='ate', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content=' best', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='.', tool_calls=None), finish_reason=None)] created=1712562737 object='chat.completion.chunk' usage=None
+id='9545f8df65964196bb8ce9f493566f31' model='open-mistral-7b' choices=[ChatCompletionResponseStreamChoice(index=0, delta=DeltaMessage(role=None, content='', tool_calls=None), finish_reason=&lt;FinishReason.stop: 'stop'&gt;)] created=1712562737 object='chat.completion.chunk' usage=UsageInfo(prompt_tokens=15, total_tokens=382, completion_tokens=367)</code></pre>
+</div>
+</div>
+<div id="cell-45" class="cell" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>stream_response <span class="op">=</span> client.chat_stream(model<span class="op">=</span>m, messages<span class="op">=</span>messages)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> chunk <span class="kw">in</span> stream_response: <span class="bu">print</span>(chunk.choices[<span class="dv">0</span>].delta.content)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+It
+'
+s
+ subject
+ive
+ to
+ determine
+ the
+ "
+best
+"
+ French
+ cheese
+ as
+ it
+ largely
+ depends
+ on
+ personal
+ preferences
+.
+ Some
+ popular
+ and
+ well
+-
+known
+ French
+ che
+es
+es
+ are
+:
+
+
+1
+.
+ Ro
+qu
+ef
+ort
+:
+ A
+ blue
+-
+ve
+ined
+ cheese
+ made
+ from
+ sheep
+'
+s
+ milk
+,
+ famous
+ for
+ its
+ distinctive
+ p
+ung
+ent
+ smell
+ and
+ tang
+y
+,
+ sal
+ty
+ taste
+.
+
+2
+.
+ Cam
+ember
+t
+:
+ A
+ soft
+,
+ cream
+y
+ cheese
+ with
+ a
+ white
+ r
+ind
+ and
+ a
+ rich
+,
+ earth
+y
+ flavor
+,
+ made
+ from
+ cow
+'
+s
+ milk
+.
+
+3
+.
+ B
+rie
+:
+ A
+ soft
+,
+ cream
+y
+ cheese
+ with
+ a
+ white
+ r
+ind
+ and
+ a
+ mild
+,
+ butter
+y
+ taste
+,
+ often
+ eaten
+ with
+ bread
+ or
+ crack
+ers
+.
+
+4
+.
+ Com
+té
+:
+ A
+ hard
+,
+ nut
+ty
+ cheese
+ made
+ from
+ un
+p
+aste
+ur
+ized
+ cow
+'
+s
+ milk
+,
+ with
+ a
+ complex
+,
+ slightly
+ sweet
+ flavor
+ and
+ a
+ firm
+,
+ cryst
+all
+ine
+ texture
+.
+
+5
+.
+ Mun
+ster
+:
+ A
+ soft
+,
+ sm
+elly
+ cheese
+ with
+ a
+ p
+ung
+ent
+ arom
+a
+ and
+ a
+ sp
+icy
+,
+ pepper
+y
+ taste
+,
+ made
+ from
+ cow
+'
+s
+ milk
+.
+
+
+You
+ may
+ want
+ to
+ try
+ several
+ types
+ of
+ French
+ che
+es
+es
+ to
+ find
+ your
+ favorite
+!
+</code></pre>
+</div>
+</div>
+</section>
+<section id="with-async" class="level3">
+<h3 class="anchored" data-anchor-id="with-async">With async</h3>
+<div id="cell-47" class="cell" data-execution_count="40">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mistralai.async_client <span class="im">import</span> MistralAsyncClient</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> MistralAsyncClient(api_key<span class="op">=</span>API_KEY)</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>async_response <span class="op">=</span> client.chat_stream(model<span class="op">=</span>m, messages<span class="op">=</span>messages)</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a><span class="cf">async</span> <span class="cf">for</span> chunk <span class="kw">in</span> async_response: <span class="bu">print</span>(chunk.choices[<span class="dv">0</span>].delta.content)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+The
+ title
+ of
+ the
+ "
+best
+"
+ French
+ cheese
+ is
+ subject
+ive
+ and
+ can
+ vary
+ depending
+ on
+ personal
+ preferences
+,
+ as
+ there
+ are
+ over
+ 
+4
+0
+0
+ types
+ of
+ French
+ cheese
+,
+ each
+ with
+ unique
+ flav
+ors
+,
+ text
+ures
+,
+ and
+ arom
+as
+.
+ Some
+ popular
+ and
+ highly
+ regarded
+ French
+ che
+es
+es
+ include
+:
+
+
+1
+.
+ Ro
+qu
+ef
+ort
+:
+ A
+ blue
+-
+ve
+ined
+ sheep
+'
+s
+ milk
+ cheese
+ from
+ the
+ Mass
+if
+ Central
+ region
+,
+ known
+ for
+ its
+ p
+ung
+ent
+,
+ tang
+y
+ flavor
+ and
+ distinct
+ ve
+ining
+.
+
+2
+.
+ Cam
+ember
+t
+:
+ A
+ soft
+,
+ cream
+y
+ cow
+'
+s
+ milk
+ cheese
+ from
+ Norm
+andy
+,
+ known
+ for
+ its
+ earth
+y
+,
+ mush
+room
+y
+ flavor
+ and
+ white
+,
+ down
+y
+ r
+ind
+.
+
+3
+.
+ Com
+té
+:
+ A
+ nut
+ty
+,
+ sweet
+,
+ and
+ slightly
+ fru
+ity
+ cow
+'
+s
+ milk
+ cheese
+ from
+ the
+ Fr
+anche
+-
+Com
+té
+ region
+,
+ often
+ aged
+ for
+ several
+ years
+ for
+ a
+ more
+ complex
+ flavor
+.
+
+4
+.
+ B
+rie
+ de
+ Me
+aux
+:
+ A
+ soft
+,
+ blo
+omy
+ r
+ind
+ cow
+'
+s
+ milk
+ cheese
+ from
+ the
+ Î
+le
+-
+de
+-
+Fr
+ance
+ region
+,
+ known
+ for
+ its
+ cream
+y
+ texture
+ and
+ mild
+,
+ butter
+y
+ flavor
+.
+
+5
+.
+ Mun
+ster
+:
+ A
+ soft
+,
+ p
+ung
+ent
+,
+ washed
+-
+r
+ind
+ cow
+'
+s
+ milk
+ cheese
+ from
+ Als
+ace
+,
+ with
+ a
+ distinctive
+ smell
+ and
+ a
+ complex
+,
+ sp
+icy
+,
+ and
+ sav
+ory
+ flavor
+.
+
+
+U
+lt
+imately
+,
+ the
+ best
+ French
+ cheese
+ for
+ you
+ will
+ depend
+ on
+ your
+ personal
+ taste
+ preferences
+ and
+ the
+ occasion
+ for
+ which
+ you
+ plan
+ to
+ use
+ it
+.
+</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="chat-class" class="level2">
+<h2 class="anchored" data-anchor-id="chat-class">Chat Class</h2>
+<div id="cell-49" class="cell" data-execution_count="60">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastcore.<span class="bu">all</span> <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Chat:</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, api_key, model): store_attr()</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, message): </span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>    messages <span class="op">=</span> [ChatMessage(role<span class="op">=</span><span class="st">'user'</span>, content<span class="op">=</span>message)]</span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> client.chat(model<span class="op">=</span><span class="va">self</span>.model, messages<span class="op">=</span>messages)</span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response.choices[<span class="dv">0</span>].message.content</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-50" class="cell" data-execution_count="61">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> Chat(API_KEY, <span class="st">'open-mistral-7b'</span>)</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>c(<span class="st">'What is the best French Cheese?'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="61">
+<pre><code>'Determining the "best" French cheese can be subjective as it depends on personal preferences, as there are over 400 varieties of French cheese, each with unique flavors, textures, and milk sources. Here are some popular and highly regarded French cheeses in various categories:\n\n1. Soft and Bloomy Rind: Brie de Meaux, Brie de Melun, and Camembert are classic examples of soft French cheeses with bloomy rinds. They offer creamy, rich, and tangy flavors.\n\n2. Hard and Cooked: Comté and Gruyère are popular hard and cooked French cheeses known for their nutty, slightly sweet flavors. They melt well and are often used in cooking.\n\n3. Blue Cheese: Roquefort and Fourme d\'Ambert are famous French blue cheeses with a pungent, sharp, and savory taste.\n\n4. Goat Cheese: Chevre is a popular French goat cheese that comes in various textures, from soft and spreadable to firm and aged. It has a fresh, tangy taste with subtle earthy undertones.\n\n5. Hard and Unpasteurized: Cheese such as Ossau-Iraty, Comté Vieux, and Morbier are exceptional hard, unpasteurized French cheeses, offering complex flavors with a distinct terroir.\n\nUltimately, the best French cheese for you is the one that suits your taste preferences. Experimenting with different types and styles will help you discover your favorite.'</code></pre>
+</div>
+</div>
+<p>Use query and response jargon.</p>
+<div id="cell-52" class="cell" data-execution_count="81">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Chat:</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, api_key, model): </span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>    store_attr()</span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.history <span class="op">=</span> []</span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, query): </span>
+<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a>    messages <span class="op">=</span> <span class="va">self</span>.history <span class="op">+</span> [ChatMessage(role<span class="op">=</span><span class="st">'user'</span>, content<span class="op">=</span>query)]</span>
+<span id="cb71-9"><a href="#cb71-9" aria-hidden="true" tabindex="-1"></a>    response <span class="op">=</span> client.chat(model<span class="op">=</span><span class="va">self</span>.model, messages<span class="op">=</span>messages).choices[<span class="dv">0</span>].message.content</span>
+<span id="cb71-10"><a href="#cb71-10" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.write_history(query, response)</span>
+<span id="cb71-11"><a href="#cb71-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> response</span>
+<span id="cb71-12"><a href="#cb71-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb71-13"><a href="#cb71-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb71-14"><a href="#cb71-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> write_history(<span class="va">self</span>, query, response):</span>
+<span id="cb71-15"><a href="#cb71-15" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.history.append(ChatMessage(role<span class="op">=</span><span class="st">'user'</span>, content<span class="op">=</span>query))</span>
+<span id="cb71-16"><a href="#cb71-16" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.history.append(ChatMessage(role<span class="op">=</span><span class="st">'assistant'</span>, content<span class="op">=</span>response))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-53" class="cell" data-execution_count="82">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> Chat(API_KEY, m)</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>c(<span class="st">'What is the best French cheese?'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="82">
+<pre><code>'The best French cheese can be subjective as it depends on personal preferences, as there are over 400 types of French cheese, each with unique flavors, textures, and milk sources. Here are a few popular and highly regarded French cheeses:\n\n1. Roquefort: A blue cheese made from sheep\'s milk, originating from the Massif Central region in France. It has a strong, pungent aroma and a tangy, salty taste.\n\n2. Comté: A hard, nutty cheese made from unpasteurized cow\'s milk from the Franche-Comté region in eastern France. It is often referred to as the "King of French Cheeses."\n\n3. Camembert: A soft, creamy, and pungent cheese made from cow\'s milk, originating from Normandy. It has a white bloom rind and a distinctive earthy flavor.\n\n4. Brie de Meaux: A soft and creamy cheese with a white bloom rind, made from cow\'s milk, originating from the Marne region in north-central France. It has a mild, buttery, and slightly sweet flavor.\n\n5. Munster: A soft, smelly, and runny cheese made from cow\'s milk, originating from Alsace. It has a strong, pungent aroma and a slightly sweet and spicy taste.\n\nUltimately, the best French cheese for you depends on your personal taste preferences. These five cheeses are popular choices, but there are many others to explore as well.'</code></pre>
+</div>
+</div>
+<div id="cell-54" class="cell" data-execution_count="83">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>c(<span class="st">'What about the British variety?'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="83">
+<pre><code>"British cheese is also diverse and delicious, with its own unique character. Here are a few popular and highly regarded British cheeses:\n\n1. Cheddar: A hard, tangy, and crumbly cheese originating from the English county of Somerset. It is one of the most famous and widely produced cheeses in the world.\n\n2. Stilton: A blue-veined cheese made from cow's milk, originating from the English counties of Nottinghamshire, Derbyshire, and Leicestershire. It has a strong, pungent aroma and a savory, tangy flavor.\n\n3. Cheshire: A semi-hard, crumbly, and slightly tangy cheese made from cow's milk, originating from the county of Cheshire in northwest England. It has a long history, dating back to the 12th century.\n\n4. Wensleydale: A soft, crumbly, and creamy cheese made from cow's milk, originating from the Yorkshire Dales in northern England. It has a mild, slightly sweet flavor and is often used in desserts and fruitcakes.\n\n5. Lancashire: A hard, tangy, and crumbly cheese made from cow's milk, originating from the county of Lancashire in northwest England. It has a distinctive savory and slightly sweet flavor and is sometimes used in baking.\n\nBritish cheese offers a rich diversity of flavors and textures, and these five cheeses are just a few popular choices. There are many others to explore as well."</code></pre>
+</div>
+</div>
+<div id="cell-55" class="cell" data-execution_count="84">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>c(<span class="st">'Do you have any favorite?'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="84">
+<pre><code>"I don't have personal preferences or favorites as I'm an artificial intelligence and don't consume food. However, I can share that I enjoy learning about and helping people discover new cheeses. Each type of cheese has its unique characteristics and can offer a delightful tasting experience. I encourage everyone to explore different cheeses and find their personal favorites based on their taste preferences. Cheese is a wonderful and diverse food category, and there's always something new to discover."</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/ForBo7\.github\.io\/Terminal-LLM");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/ForBo7/Terminal-LLM/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

@@ -3,27 +3,21 @@
 # %% auto 0
 __all__ = ['Chat']
 
-# %% ../nbs/00_chat.ipynb 30
+# %% ../nbs/00_chat.ipynb 18
 from mistralai.client import MistralClient
-
-
-# %% ../nbs/00_chat.ipynb 32
 from mistralai.models.chat_completion import ChatMessage
 
-
-# %% ../nbs/00_chat.ipynb 54
-from fastcore.all import *
-
-
-# %% ../nbs/00_chat.ipynb 58
+# %% ../nbs/00_chat.ipynb 50
 class Chat:
-  def __init__(self, api_key, model): 
+  def __init__(self, api_key, model):
+    '''Initialize the class.'''
     self.client = MistralClient(api_key=api_key)
     self.model = model
     self.history = []
 
 
   def __call__(self, query): 
+    '''Send a query to the model and return the response.'''
     messages = self.history + [ChatMessage(role='user', content=query)]
     response = self.client.chat(model=self.model, messages=messages).choices[0].message.content
     self.write_history(query, response)
@@ -31,5 +25,8 @@ class Chat:
   
   
   def write_history(self, query, response):
+    '''Store the query and response in the history.'''
     self.history.append(ChatMessage(role='user', content=query))
     self.history.append(ChatMessage(role='assistant', content=response))
+
+
